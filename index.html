@@ -1,0 +1,104 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Defence Habitat - Marasandra | Premium Plots</title>
+    <!-- Favicon -->
+<link rel="icon" type="image/x-icon" href="/fevicons/favicon.ico" />
+
+<link rel="icon" type="image/png" sizes="16x16" href="/fevicons/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="/fevicons/favicon-32x32.png" />
+
+<!-- Apple Touch Icon -->
+<link rel="apple-touch-icon" sizes="180x180" href="/fevicons/apple-touch-icon.png" />
+
+<!-- Android Chrome -->
+<link rel="icon" type="image/png" sizes="192x192" href="/fevicons/android-chrome-192x192.png" />
+<link rel="icon" type="image/png" sizes="512x512" href="/fevicons/android-chrome-512x512.png" />
+
+<!-- Web App Manifest -->
+<link rel="manifest" href="/fevicons/site.webmanifest" />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/TextPlugin.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@100;300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --color-navy: #1A365D;
+        --color-gold: #B8860B;
+        --color-red: #ED1C24;
+        --color-blue: #0070C0;
+      }
+      body {
+        font-family: 'Inter', sans-serif;
+        scroll-behavior: smooth;
+        background-color: #ffffff;
+      }
+      h1, h2, h3, .font-serif {
+        font-family: 'Playfair Display', serif;
+      }
+      .bg-navy { background-color: var(--color-navy); }
+      .text-navy { color: var(--color-navy); }
+      .border-gold { border-color: var(--color-gold); }
+      .bg-gold { background-color: var(--color-gold); }
+      .text-gold { color: var(--color-gold); }
+      .text-red { color: var(--color-red); }
+      .bg-red { background-color: var(--color-red); }
+      
+      .gold-gradient {
+        background: linear-gradient(135deg, #B8860B 0%, #D4AF37 50%, #B8860B 100%);
+      }
+      .navy-gradient {
+        background: linear-gradient(135deg, #1A365D 0%, #2A4365 100%);
+      }
+
+      /* Premium Corporate Accents */
+      .glass-card {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+      
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f8fafc;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--color-gold);
+        border-radius: 10px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #966d09;
+      }
+
+      /* Reveal Animation Utility */
+      .reveal-hidden {
+        opacity: 0;
+        visibility: hidden;
+      }
+    </style>
+    <script type="importmap">
+    {
+      "imports": {
+        "react/": "https://esm.sh/react@^19.2.3/",
+        "react": "https://esm.sh/react@^19.2.3",
+        "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+        "react-dom/": "https://esm.sh/react-dom@^19.2.3/"
+      }
+    }
+    </script>
+  <link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+  <script type="module" src="/index.jsx"></script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+{
+  "name": "Defence Habitat - Marasandra",
+  "description": "Premium residential plots in North Bangalore offering a luxurious lifestyle with modern amenities and strategic location advantages.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
