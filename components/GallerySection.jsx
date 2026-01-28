@@ -1,5 +1,6 @@
 
 import React from 'react';
+import aerialScenery from '../assets/aerialScenery.jpg';
 
 const GallerySection = () => {
   return (
@@ -28,7 +29,7 @@ const GallerySection = () => {
           </div>
           <div className="relative group overflow-hidden rounded-3xl shadow-2xl">
             <img 
-              src="https://defence-habitat-marasandra.defencehousingsociety.com/assets/img/gallery/Layout1.jpg" 
+              src={aerialScenery} 
               alt="Aerial View" 
               className="w-full aspect-video object-cover transition-transform duration-700 group-hover:scale-110" 
             />
