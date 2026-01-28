@@ -1,24 +1,120 @@
-
-import React, { useState, useEffect, useRef } from 'react';
-import { Send, CheckCircle2 } from 'lucide-react';
+import React, { useState, useRef } from "react";
+import { Send } from "lucide-react";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const ContactForm = () => {
-  const [submitted, setSubmitted] = useState(false);
-  const successRef = useRef(null);
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    message: "",
+    acceptTerms: false,
+  });
+  const recaptchaRef = useRef(null);
 
-  useEffect(() => {
-    if (submitted && successRef.current && typeof gsap !== 'undefined') {
-      const check = successRef.current.querySelector('.success-icon');
-      gsap.fromTo(check, 
-        { scale: 0, rotation: -45 },
-        { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2)" }
-      );
+  const [status, setStatus] = useState({ loading: false, ok: null, msg: "" });
+  const [captchaValue, setCaptchaValue] = useState(null);
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setForm((s) => ({
+      ...s,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const validate = () => {
+    if (!form.name.trim() || !form.email.trim() || !form.message.trim()) {
+      setStatus({
+        loading: false,
+        ok: false,
+        msg: "Please fill required fields.",
+      });
+      return false;
     }
-  }, [submitted]);
 
-  const handleSubmit = (e) => {
+    const re = /\S+@\S+\.\S+/;
+    if (!re.test(form.email)) {
+      setStatus({
+        loading: false,
+        ok: false,
+        msg: "Please enter a valid email.",
+      });
+      return false;
+    }
+
+    if (!captchaValue) {
+      setStatus({
+        loading: false,
+        ok: false,
+        msg: "Please verify that you are not a robot.",
+      });
+      return false;
+    }
+
+    if (!form.acceptTerms) {
+      setStatus({
+        loading: false,
+        ok: false,
+        msg: "Please accept Terms & Conditions and Privacy Policy.",
+      });
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
+    setStatus({ loading: true, ok: null, msg: "" });
+
+    if (!validate()) return;
+
+    try {
+      const endpoint =
+        "https://adminpanel.defencehousingsociety.com/defenceWebsiteRoutes/contactus";
+      // "http://localhost:4000/defenceWebsiteRoutes/contactus";
+
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...form,
+          source: "Marasandra landing page",
+          captchaValue,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        setStatus({
+          loading: false,
+          ok: true,
+          msg: "Message sent. Thank you!",
+        });
+
+        setForm({
+          name: "",
+          email: "",
+          phone: "",
+          message: "",
+          acceptTerms: false,
+        });
+
+        setCaptchaValue(null);
+        recaptchaRef.current?.reset();
+      } else {
+        throw new Error(data?.message || "Failed to send");
+      }
+    } catch (err) {
+      console.error(err);
+      setStatus({
+        loading: false,
+        ok: false,
+        msg: err.message || "Error sending message.",
+      });
+    }
   };
 
   return (
@@ -26,73 +122,132 @@ const ContactForm = () => {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-3xl shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] border border-slate-100 overflow-hidden">
           <div className="grid grid-cols-1 md:grid-cols-5">
-            <div className="md:col-span-2 bg-navy p-12 text-white flex flex-col justify-between">
-              <div>
-                <h2 className="text-3xl font-bold mb-6 font-serif italic">Get in Touch</h2>
-                <p className="text-slate-300 font-light mb-8">
-                  For any queries, please fill out the form, and our professional team will get in touch with you shortly.
-                </p>
-              </div>
-              <div className="space-y-4">
-                <div className="flex items-center gap-3 group">
-                  <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-gold group-hover:scale-110 transition-transform"><Send size={14} /></div>
-                  <span className="text-sm">Personalized Consultation</span>
-                </div>
-                <div className="flex items-center gap-3 group">
-                  <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-gold group-hover:scale-110 transition-transform"><CheckCircle2 size={14} /></div>
-                  <span className="text-sm">Site Visit Scheduling</span>
-                </div>
-              </div>
+            {/* Left panel */}
+            <div className="md:col-span-2 bg-navy p-12 text-white">
+              <h2 className="text-3xl font-bold mb-6 font-serif italic">
+                Get in Touch
+              </h2>
+              <p className="text-slate-300 font-light">
+                For any queries, please fill out the form and our team will
+                contact you shortly.
+              </p>
             </div>
+
+            {/* Form */}
             <div className="md:col-span-3 p-12">
-              {!submitted ? (
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-xs uppercase tracking-widest text-slate-400 mb-2 font-bold">Full Name</label>
-                      <input 
-                        type="text" 
-                        required 
-                        placeholder="John Doe" 
-                        className="w-full px-4 py-3 rounded-lg border border-slate-200 bg-white text-slate-900 focus:border-gold focus:ring-1 focus:ring-gold outline-none transition-all" 
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs uppercase tracking-widest text-slate-400 mb-2 font-bold">Phone Number</label>
-                      <input 
-                        type="tel" 
-                        required 
-                        placeholder="+91 00000 00000" 
-                        className="w-full px-4 py-3 rounded-lg border border-slate-200 bg-white text-slate-900 focus:border-gold focus:ring-1 focus:ring-gold outline-none transition-all" 
-                      />
-                    </div>
-                  </div>
+              <form className="space-y-6" onSubmit={handleSubmit}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-xs uppercase tracking-widest text-slate-400 mb-2 font-bold">Email Address</label>
-                    <input 
-                      type="email" 
-                      required 
-                      placeholder="john@example.com" 
-                      className="w-full px-4 py-3 rounded-lg border border-slate-200 bg-white text-slate-900 focus:border-gold focus:ring-1 focus:ring-gold outline-none transition-all" 
+                    <label className="block text-sm font-medium text-slate-700 mb-1">
+                      Name*
+                    </label>
+                    <input
+                      name="name"
+                      value={form.name}
+                      onChange={handleChange}
+                      type="text"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-sm focus:ring-2 focus:ring-gold-400 outline-none"
+                      required
                     />
                   </div>
-                  <button 
-                    type="submit" 
-                    className="w-full bg-navy text-white py-4 rounded-lg font-bold hover:bg-slate-800 transition-all shadow-lg uppercase tracking-widest text-sm flex items-center justify-center gap-2 group"
-                  >
-                    <span>Send Message</span>
-                    <Send size={16} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-                  </button>
-                </form>
-              ) : (
-                <div ref={successRef} className="h-full flex flex-col items-center justify-center text-center space-y-4">
-                  <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center success-icon">
-                    <CheckCircle2 size={40} />
+
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">
+                      Phone Number
+                    </label>
+                    <input
+                      name="phone"
+                      value={form.phone}
+                      onChange={handleChange}
+                      type="tel"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-sm focus:ring-2 focus:ring-gold-400 outline-none"
+                    />
                   </div>
-                  <h3 className="text-2xl font-bold text-navy">Message Received!</h3>
-                  <p className="text-slate-500">Our representative will call you back within 24 hours.</p>
                 </div>
-              )}
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                    Email Address*
+                  </label>
+                  <input
+                    name="email"
+                    value={form.email}
+                    onChange={handleChange}
+                    type="email"
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-sm focus:ring-2 focus:ring-gold-400 outline-none"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                    Message*
+                  </label>
+                  <textarea
+                    name="message"
+                    value={form.message}
+                    onChange={handleChange}
+                    rows={4}
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-sm focus:ring-2 focus:ring-gold-400 outline-none"
+                    required
+                  />
+                </div>
+
+                <div className="flex justify-center">
+                  <ReCAPTCHA
+                    ref={recaptchaRef}
+                    sitekey="6LfarqkrAAAAAFUBBVCodI4OdoTheC6uB1hdtITz"
+                    onChange={setCaptchaValue}
+                    onExpired={() => setCaptchaValue(null)}
+                  />
+                </div>
+
+                <div className="flex items-start gap-2">
+                  <input
+                    type="checkbox"
+                    name="acceptTerms"
+                    checked={form.acceptTerms}
+                    onChange={handleChange}
+                    className="mt-1 h-4 w-4"
+                  />
+                  <p className="text-sm text-slate-600">
+                    I accept the{" "}
+                    <a
+                      href="https://defencehousingsociety.com/terms-conditions"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-semibold underline"
+                    >
+                      Terms & Conditions
+                    </a>{" "}
+                    and{" "}
+                    <a
+                      href="https://defencehousingsociety.com/privacy-policy"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-semibold underline"
+                    >
+                      Privacy Policy
+                    </a>
+                  </p>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={status.loading}
+                  className="w-full bg-blue-900 text-white font-bold py-4 rounded-sm flex items-center justify-center gap-2"
+                >
+                  {status.loading ? "Sending..." : "Submit Enquiry"}
+                  <Send size={18} />
+                </button>
+
+                {status.ok === true && (
+                  <p className="text-green-600">{status.msg}</p>
+                )}
+                {status.ok === false && (
+                  <p className="text-red-600">{status.msg}</p>
+                )}
+              </form>
             </div>
           </div>
         </div>
