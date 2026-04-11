@@ -10,6 +10,7 @@ import PricingTable from './components/PricingTable';
 import GallerySection from './components/GallerySection';
 import ContactForm from './components/ContactForm';
 import Footer from './components/Footer';
+import contactFormPopup from './components/contactFormPopup'
 
 const App = () => {
   const mainRef = useRef(null);
@@ -43,6 +44,7 @@ const App = () => {
   return (
     <div ref={mainRef} className="min-h-screen bg-white text-slate-900 overflow-x-hidden selection:bg-gold selection:text-white">
       <Header />
+      <contactFormPopup />
       <main>
         <Hero />
         <BookingInfo />
