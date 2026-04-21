@@ -82,6 +82,7 @@ const ContactForm = () => {
           ...form,
           source: "Marasandra landing page",
           captchaValue,
+          declaration:form.acceptTerms
         }),
       });
 

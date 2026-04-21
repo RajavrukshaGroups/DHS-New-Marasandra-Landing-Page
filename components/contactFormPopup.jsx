@@ -698,6 +698,7 @@ const ContactFormPopup = () => {
       phone: formData.phone,
       message: formData.message.trim(),
       acceptTerms,
+      declaration:acceptTerms,
       source: "Marasandra landing page",
       captchaValue,
       uniqueId,
