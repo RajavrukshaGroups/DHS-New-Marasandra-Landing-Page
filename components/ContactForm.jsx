@@ -17,18 +17,33 @@ const ContactForm = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+    let finalValue = type === "checkbox" ? checked : value;
+
+    if (name === "phone") {
+      finalValue = value.replace(/\D/g, '').replace(/^0+/, '').slice(0, 10);
+    }
+
     setForm((s) => ({
       ...s,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: finalValue,
     }));
   };
 
   const validate = () => {
-    if (!form.name.trim() || !form.email.trim() || !form.message.trim()) {
+    if (!form.name.trim() || !form.email.trim() || !form.message.trim() || !form.phone) {
       setStatus({
         loading: false,
         ok: false,
         msg: "Please fill required fields.",
+      });
+      return false;
+    }
+
+    if (form.phone.length !== 10) {
+      setStatus({
+        loading: false,
+        ok: false,
+        msg: "Please enter a valid 10-digit phone number.",
       });
       return false;
     }

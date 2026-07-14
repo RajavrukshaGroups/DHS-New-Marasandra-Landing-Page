@@ -627,7 +627,7 @@ const ContactFormPopup = () => {
     } else {
       let processedValue = value;
       if (name === "phone") {
-        processedValue = value.replace(/\D/g, '').slice(0, 10);
+        processedValue = value.replace(/\D/g, '').replace(/^0+/, '').slice(0, 10);
         if (phoneError) setPhoneError("");
       }
       setFormData((prev) => ({ ...prev, [name]: processedValue }));
@@ -636,7 +636,7 @@ const ContactFormPopup = () => {
 
   const validatePhoneNumber = (phone) => {
     if (!phone) return "Phone number is required";
-    if (!/^\d{10}$/.test(phone)) return "Phone number must be exactly 10 digits";
+    if (phone.length !== 10) return "Phone number must be exactly 10 digits";
     return "";
   };
 
